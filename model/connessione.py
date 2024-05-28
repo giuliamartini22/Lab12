@@ -9,3 +9,6 @@ class Connessione():
     R1: go_retailers
     R2: go_retailers
     N: int
+
+    def getN(self):
+        return self.N

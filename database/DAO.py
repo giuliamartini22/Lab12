@@ -1,4 +1,5 @@
 from database.DB_connect import DBConnect
+from model.connessione import Connessione
 from model.go_retailers import go_retailers
 
 
@@ -56,28 +57,31 @@ class DAO():
         return result
 
     @staticmethod
-    def getAllEdges(country, year):
+    def getAllEdges(country, year, idMap):
         conn = DBConnect.get_connection()
 
         result = []
 
         cursor = conn.cursor(dictionary=True)
-        query = """select gr1.Retailer_code, gr2.Retailer_code
-            from go_retailers gr1, go_retailers gr2, go_daily_sales gds1, go_daily_sales gds2  
-            where gr1.Country = 'France' 
-            and gr2.Country  = 'France'
-            and year(gds1.`Date`) = 2015
-            and year(gds2.`Date`) = 2015
-            and gr1.Retailer_code < gr2.Retailer_code 
-            and gds1.Retailer_code = gr1.Retailer_code 
-            and gds2.Retailer_code = gr2.Retailer_code 
-            and gds1.Product_number = gds2.Product_number 
-            """
+        query = """select gr1.Retailer_code as RC1, gr2.Retailer_code as RC2, count(distinct gds1.Product_number) as peso
+                    from go_retailers gr1, go_retailers gr2, go_daily_sales gds1, go_daily_sales gds2  
+                    where gr1.Country = %s 
+                    and gr2.Country  = %s
+                    and year(gds1.`Date`) = %s
+                    and year(gds2.`Date`) = %s
+                    and gr1.Retailer_code < gr2.Retailer_code 
+                    and gds1.Retailer_code = gr1.Retailer_code 
+                    and gds2.Retailer_code = gr2.Retailer_code 
+                    and gds1.Product_number = gds2.Product_number 
+                    group by gr1.Retailer_code, gr2.Retailer_code
+                """
 
-        cursor.execute(query, (country,country, year))
+        cursor.execute(query, (country,country, year, year))
 
         for row in cursor:
-            result.append(go_retailers(**row))
+            result.append(Connessione(idMap[row["RC1"]],
+                                        idMap[row["RC2"]],
+                                        row["peso"]))
 
         cursor.close()
         conn.close()

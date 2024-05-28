@@ -50,18 +50,25 @@ class Controller:
         except ValueError:
             self._view.txt_result.controls.append(ft.Text("Country non inserito"))
             self._view.update_page()
-            try:
-                annoIns = str(anno)
-            except ValueError:
-                self._view.txt_result.controls.append(ft.Text("Anno non inserito"))
-                self._view.update_page()
+        try:
+            annoIns = int(anno)
+        except ValueError:
+            self._view.txt_result.controls.append(ft.Text("Anno non inserito"))
+            self._view.update_page()
 
         self._model.buildGraph(countryIns, annoIns)
+        self._view.txt_result.controls.append(ft.Text(f"Numero di vertici: {self._model.getNumNodi()}"))
+        self._view.txt_result.controls.append(ft.Text(f"Numero di archi: {self._model.getNumArchi()}"))
+        self._view.update_page()
+
 
 
 
     def handle_volume(self, e):
-        pass
+        vicini = self._model.calcolaVolumeVendita()
+        for v in vicini:
+            self._view.txtOut2.controls.append(ft.Text(f"{v[0]} --> {v[1]}"))
+        self._view.update_page()
 
 
     def handle_path(self, e):
