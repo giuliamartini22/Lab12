@@ -34,14 +34,19 @@ class View(ft.UserControl):
         self._page.controls.append(self._title)
 
         #ROW with some controls
-        self.ddyear = ft.Dropdown(label="Anno")
-        self.ddcountry= ft.Dropdown(label="Nazione")
+        self.ddyear = ft.Dropdown(label="Anno", options=[ft.dropdown.Option(key="None",
+                                                            text="Nessun filtro")],
+                                                            on_change=self._controller.read_anno)
+        self.ddcountry= ft.Dropdown(label="Nazione", options=[ft.dropdown.Option(key="None",
+                                                            text="Nessun filtro")],
+                                                            on_change=self._controller.read_country)
 
         self.btn_graph = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handle_graph)
 
         row1 = ft.Row([self.ddyear, self.ddcountry, self.btn_graph],
                       alignment=ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row1)
+        self._controller.populate_dd_anno()
         self._controller.fillDD()
 
         # List View where the reply is printed

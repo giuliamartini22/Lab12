@@ -1,18 +1,27 @@
+import networkx as nx
+
+from database.DAO import DAO
+
+
 class Model:
-    @staticmethod
-    def getAllAirports():
-        conn = DBConnect.get_connection()
+    def __init__(self):
+        self._listYears = []
+        self._listCountries = []
+        self._idMap = {}
+        self._grafo = nx.Graph()
 
-        result = []
+    def buildGraph(self, country, year):
+        self._grafo.edges.clear()
+        self._nodi = DAO.getAllRetailers(country)
+        print(len(self._nodi))
+        for r in self._nodi:
+            self._idMap[r.Retailer_code] = r
+        #print(self._idMap)
+        self._grafo.add_nodes_from(self._nodi)
+    def getYears(self):
+        self._listYears = DAO.getAllYears()
+        return self._listYears
 
-        cursor = conn.cursor(dictionary=True)
-        query = """SELECT * from airports a order by a.AIRPORT asc"""
-
-        cursor.execute(query)
-
-        for row in cursor:
-            result.append(Airport(**row))
-
-        cursor.close()
-        conn.close()
-        return result
+    def getCountries(self):
+        self._listCountries = DAO.getAllCountries()
+        return self._listCountries
