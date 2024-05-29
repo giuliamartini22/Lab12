@@ -32,22 +32,22 @@ class Model:
 
     def calcolaVolumeVendita(self):
         elencoVolumiVendita = []
-        for v in self._grafo.nodes():
-            elencoVolumiVendita = self.getVolumeVendita(v)
+        for n in self._grafo.nodes():
+            pesoTot = self.getVolumeVendita(n)
+            elencoVolumiVendita.append((n, pesoTot))
+        elencoVolumiVendita.sort(key=lambda x: x[1], reverse= True)
         return elencoVolumiVendita
 
 
     def getVolumeVendita(self, v0):
         vicini = self._grafo.neighbors(v0)
-        #vicini = self._grafo.edges(v0)
-        volumeVendita = 0
-        viciniTuple = []
+        peso = 0
         for v in vicini:
-            volumeVendita = volumeVendita + self._grafo[v0][v]["weight"]
-            viciniTuple.append((v, volumeVendita))
-        viciniTuple.sort(key=lambda x: x[1], reverse=True)
-        return viciniTuple
+            peso = peso + self.getEdgeWeight(v0, v)
+        return peso
 
+    def getEdgeWeight(self, v1,v2):
+        return self._grafo[v1][v2]["weight"]
 
     def printGraphDetails(self):
         print(f"Num Nodi: {len(self._grafo.nodes)}")

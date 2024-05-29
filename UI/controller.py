@@ -61,9 +61,6 @@ class Controller:
         self._view.txt_result.controls.append(ft.Text(f"Numero di archi: {self._model.getNumArchi()}"))
         self._view.update_page()
 
-
-
-
     def handle_volume(self, e):
         vicini = self._model.calcolaVolumeVendita()
         for v in vicini:
