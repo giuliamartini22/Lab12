@@ -45,18 +45,29 @@ class Controller:
     def handle_graph(self, e):
         country = self._view.ddcountry.value
         anno = self._view.ddyear.value
+
+        if country is None:
+            self._view.create_alert("Inserire la nazione")
+            return
+        if anno is None:
+            self._view.create_alert("Inserire l'anno")
+            return
         try:
             countryIns = str(country)
         except ValueError:
+            self._view.txt_result.controls.clear()
             self._view.txt_result.controls.append(ft.Text("Country non inserito"))
             self._view.update_page()
+            return
         try:
             annoIns = int(anno)
-        except ValueError:
+        except ValueError :
+            self._view.txt_result.controls.clear()
             self._view.txt_result.controls.append(ft.Text("Anno non inserito"))
             self._view.update_page()
+            return
 
-        self._model.buildGraph(countryIns, annoIns)
+        self._model.buildGraph(country, anno)
         self._view.txt_result.controls.append(ft.Text(f"Numero di vertici: {self._model.getNumNodi()}"))
         self._view.txt_result.controls.append(ft.Text(f"Numero di archi: {self._model.getNumArchi()}"))
         self._view.update_page()
